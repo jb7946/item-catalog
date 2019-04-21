@@ -69,6 +69,9 @@ def editCategory(category_id):
               ' Please create your own category')
         return redirect(url_for('showCategories'))
     if request.method == 'POST':
+        if not request.form['name']:
+            flash('Category name cannot be empty.')
+            return redirect(url_for('editCategory', category_id=category_id))
         if request.form['name']:
             editedCategory.name = request.form['name']
             flash('Successfully Edited %s' % editedCategory.name)
@@ -149,8 +152,16 @@ def editCatItem(category_id, item_id):
               ' Please create your own category')
         return redirect(url_for('showItem', category_id=category_id))
     if request.method == 'POST':
+        if not request.form['name']:
+            flash('Item name cannot be empty.')
+            return redirect(url_for('editCatItem', category_id=category_id,
+                                    item_id=item_id))
         if request.form['name']:
             editedItem.name = request.form['name']
+        if not request.form['description']:
+            flash('Item description cannot be empty.')
+            return redirect(url_for('editCatItem', category_id=category_id,
+                                    item_id=item_id))
         if request.form['description']:
             editedItem.description = request.form['description']
         session.add(editedItem)
