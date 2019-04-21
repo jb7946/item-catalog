@@ -44,6 +44,9 @@ def newCategory():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
+        if not request.form['name']:
+            flash('Category name was empty, this field requires text.')
+            return redirect(url_for('newCategory'))
         newCategory = Category(
             name=request.form['name'], user_id=login_session['user_id'])
         session.add(newCategory)
@@ -116,13 +119,19 @@ def newCatItem(category_id):
               ' Please create your own category')
         return redirect(url_for('showItem', category_id=category_id))
     if request.method == 'POST':
-            newItem = Item(name=request.form['name'], description=request.form
+        if not request.form['name']:
+            flash('Item name was empty, item name requires text.')
+            return redirect(url_for('newCatItem', category_id=category_id))
+        if not request.form['description']:
+            flash('Item description was empty, item description requires text.')
+            return redirect(url_for('newCatItem', category_id=category_id))
+        newItem = Item(name=request.form['name'], description=request.form
                            ['description'], category_id=category_id,
                            user_id=category.user_id)
-            session.add(newItem)
-            session.commit()
-            flash(' %s Item Successfully Created' % (newItem.name))
-            return redirect(url_for('showItem', category_id=category_id))
+        session.add(newItem)
+        session.commit()
+        flash(' %s Item Successfully Created' % (newItem.name))
+        return redirect(url_for('showItem', category_id=category_id))
     else:
         return render_template('item-add.html', category_id=category_id)
 
