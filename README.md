@@ -23,12 +23,12 @@ Develop an application that provides a list of items within a variety of categor
 #### JSON Endpoints
 
   1. Return all categories of data:
-      `http://localhost:8000/category/JSON`
+      http://localhost:8000/category/JSON
   2. Return all items in category 1 of data:
-      `http://localhost:8000/category/1/item/JSON`
+      http://localhost:8000/category/1/item/JSON
   3. Return specific item 1 in category 1 of data:
-      `http://localhost:8000/category/1/item/1/JSON`
+      http://localhost:8000/category/1/item/1/JSON
   4. Return all users:
-      `http://localhost:8000/users/JSON`
+      http://localhost:8000/users/JSON
   5. Return Categories owned by user id 1:
-      `http://localhost:8000/user/1/categories/JSON`
+      http://localhost:8000/user/1/categories/JSON
