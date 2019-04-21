@@ -94,7 +94,7 @@ def deleteCategory(category_id):
                                category=categoryToDelete)
 
 
-# Show items for a category
+# Display items for a category
 @app.route('/category/<int:category_id>/')
 @app.route('/category/<int:category_id>/item/')
 def showItem(category_id):
@@ -182,6 +182,7 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
+# Get Authorization Code
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -263,14 +264,14 @@ def gconnect():
     login_session['user_id'] = user_id
 
     output = ''
-    output += '<h1>Welcome, '
+    output += '<h1>Howdy, '
     output += login_session['username']
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius:\
         150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("you have authenticated as %s" % login_session['username'])
     print("done!")
     return output
 
@@ -300,7 +301,7 @@ def gdisconnect():
         return response
 
 
-# User Helper Functions
+# Function to create user
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -310,11 +311,13 @@ def createUser(login_session):
     return user.id
 
 
+# Function to get user info
 def getUserInfo(user_id):
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
+# Function to get user id
 def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
@@ -346,13 +349,21 @@ def disconnect():
         return redirect(url_for('showCategories'))
 
 
+# Clear the session
 @app.route('/clearSession')
 def clear_session():
     login_session.clear()
     return "session cleared"
 
 
-# JSON APIs to view Category Information
+# JSON Interface: category list
+@app.route('/category/JSON')
+def categoriesJSON():
+    categories = session.query(Category).all()
+    return jsonify(categories=[r.serialize for r in categories])
+
+
+# JSON Interface: items list in specific category
 @app.route('/category/<int:category_id>/item/JSON')
 def categoryItemJSON(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -361,24 +372,21 @@ def categoryItemJSON(category_id):
     return jsonify(items=[i.serialize for i in items])
 
 
+# JSON Interface: category item
 @app.route('/category/<int:category_id>/item/<int:item_id>/JSON')
 def itemJSON(category_id, item_id):
     items = session.query(Item).filter_by(id=item_id).one()
     return jsonify(items=items.serialize)
 
 
-@app.route('/category/JSON')
-def categoriesJSON():
-    categories = session.query(Category).all()
-    return jsonify(categories=[r.serialize for r in categories])
-
-
+# JSON Interface: users list
 @app.route('/users/JSON')
 def usersJSON():
     users = session.query(User).all()
     return jsonify(users=[x.serialize for x in users])
 
 
+# JSON Interface: categories belonging to user id
 @app.route('/user/<int:user_id>/categories/JSON')
 def userCategoriesJSON(user_id):
     categories = session.query(Category).filter_by(id=user_id).one()
